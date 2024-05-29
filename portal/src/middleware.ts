@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 export function middleware(request: NextRequest) {
   try {
 
-    const accessToken = request.cookies.get("access_token_flower_box")?.value;
-    const refreshToken = request.cookies.get("refresh_token_flower_box")?.value;
+    const accessToken = request.cookies.get("access_token_email_engine")?.value;
+    const refreshToken = request.cookies.get("refresh_token_email_engine")?.value;
 
     console.log({accessToken,refreshToken})
 
