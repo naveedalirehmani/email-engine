@@ -10,7 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useSignInMutation } from "@/services/client/auth";
-import { Loader2 } from "lucide-react";
+import { Loader2, Mail } from "lucide-react";
+import Image from "next/image";
 
 export default function LoginAccount() {
   const {
@@ -24,13 +25,18 @@ export default function LoginAccount() {
   };
 
   return (
-    <div className="min-h-screen w-full border-2 lg:grid lg:grid-cols-2">
+    <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="hidden flex-col items-center justify-center bg-muted lg:flex">
-        <h1 className="text-4xl font-bold">Email Engine</h1>
-        <p className="tex-gray-600">manage all your mail at one place!!</p>
+        <Image
+          src="/bg.svg"
+          alt="Image"
+          width="1920"
+          height="1080"
+          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
       </div>
-      <div className="flex min-h-screen items-center justify-center border-2">
-        <Card className="min-h-[400px] w-[350px] md:w-[400px]">
+      <div className="flex min-h-screen items-center justify-center">
+        <Card className="w-[350px] md:w-[400px]">
           <CardHeader className="space-y-1">
             <CardTitle className="text-center text-2xl">Sign in</CardTitle>
             <CardDescription className="text-center">
@@ -47,7 +53,7 @@ export default function LoginAccount() {
               {isFormLoading && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Login With Outlook
+              <Mail className="mr-2"></Mail> Login With Outlook
             </Button>
           </CardContent>
           <CardFooter className="flex flex-col"></CardFooter>

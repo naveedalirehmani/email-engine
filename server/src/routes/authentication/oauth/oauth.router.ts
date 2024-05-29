@@ -14,10 +14,11 @@ oAuthRouter.get("/google/callback", (request, response) =>
   GoogleAuthController.handleGoogleCallback(request, response),
 );
 
-// oAuth facebook
+// oAuth outlook
 oAuthRouter.post("/outlook", (request, response) =>
   OutlookAuthController.redirectToOutlookAuth(request, response),
 );
+
 //callback
 oAuthRouter.get("/outlook/callback", (request, response) =>
   OutlookAuthController.handleOutlookCallback(request, response),
