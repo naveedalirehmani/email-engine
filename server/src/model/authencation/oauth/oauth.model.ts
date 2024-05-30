@@ -1,7 +1,11 @@
 import prisma from "../../../prisma";
 import { UserType, UserRole } from "@prisma/client";
 
-export async function findOrCreateUser(email: string, userType: UserType) {
+export async function findOrCreateUser(
+  email: string,
+  userType: UserType,
+  displayName: string,
+) {
   try {
     let user = await prisma.user.findUnique({
       where: { email },
@@ -10,6 +14,7 @@ export async function findOrCreateUser(email: string, userType: UserType) {
     if (!user) {
       user = await prisma.user.create({
         data: {
+          displayName,
           email,
           password: "OAUTH_NO_PASSWORD",
           role: UserRole.USER,

@@ -7,6 +7,8 @@ import {
   CircleUser,
   Flower,
   LogOutIcon,
+  Mail,
+  MailCheck,
   Menu,
   Moon,
   SunMoon,
@@ -71,14 +73,20 @@ export function Navbar({ children, links }: Props) {
     },
   });
 
+  const tab = () => {
+    const parts = pathName.split("/");
+    if (parts[2]) return parts[2];
+    else return 'primary';
+  };
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      <div className="bg-muted/40 hidden border-r md:block">
+      <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Flower />
-              <span className="">Flower Box</span>
+              <Mail />
+              <span className="">Email Engine</span>
             </Link>
           </div>
           <div className="flex-1">
@@ -89,9 +97,10 @@ export function Navbar({ children, links }: Props) {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "my-1 flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                      "my-1 flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
                       {
-                        "bg-muted text-primary": item.href == pathName,
+                        "bg-primary text-white dark:text-black":
+                          item.href == pathName,
                       },
                     )}
                   >
@@ -105,7 +114,8 @@ export function Navbar({ children, links }: Props) {
         </div>
       </div>
       <div className="flex flex-col">
-        <header className="bg-muted/40 flex h-14 items-center gap-4 border-b px-4 lg:h-[60px] lg:px-6">
+        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+          <h1 className="text-xl font-semibold capitalize">{tab()}</h1>
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -173,9 +183,7 @@ export function Navbar({ children, links }: Props) {
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-          {children}
-        </main>
+        <main className="flex flex-1 flex-col gap-4 lg:gap-6">{children}</main>
       </div>
     </div>
   );

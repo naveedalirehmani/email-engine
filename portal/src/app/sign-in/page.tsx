@@ -9,13 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { useSignInMutation } from "@/services/client/auth";
 import { Loader2, Mail } from "lucide-react";
 import Image from "next/image";
 
 export default function LoginAccount() {
   const {
-    mutation: { mutate: signInWithOutlook },
+    mutation: { mutate: signInWithOutlook, data },
     formStatus: { setFormLoading, isFormLoading },
   } = useSignInMutation();
 
@@ -23,7 +24,7 @@ export default function LoginAccount() {
     setFormLoading(true);
     signInWithOutlook();
   };
-
+  
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="hidden flex-col items-center justify-center bg-muted lg:flex">
@@ -44,10 +45,11 @@ export default function LoginAccount() {
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
+            <Separator></Separator>
             <Button
               onClick={loginWithOutlook}
               disabled={isFormLoading}
-              className="w-full"
+              className="w-full bg-white"
               variant="outline"
             >
               {isFormLoading && (
@@ -55,6 +57,18 @@ export default function LoginAccount() {
               )}
               <Mail className="mr-2"></Mail> Login With Outlook
             </Button>
+            <Button
+              onClick={loginWithOutlook}
+              disabled={true}
+              className="w-full bg-white"
+              variant="outline"
+            >
+              {isFormLoading && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Login With Gmail | Coming soon...
+            </Button>
+
           </CardContent>
           <CardFooter className="flex flex-col"></CardFooter>
         </Card>

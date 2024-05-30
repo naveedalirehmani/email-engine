@@ -17,7 +17,7 @@ export function setUserCookies(response: Response, user: User) {
     "1y",
   );
 
-  response.cookie("access_token_flower_box", accessToken, {
+  response.cookie("access_token_email_engine", accessToken, {
     maxAge: ACCESS_TOKEN_MAX_AGE,
     httpOnly: true,
     secure: IS_PRODUCTION,
@@ -25,7 +25,7 @@ export function setUserCookies(response: Response, user: User) {
     ...(IS_PRODUCTION && { domain: process.env.COOKIE_CLIENT }),
   });
 
-  response.cookie("refresh_token_flower_box", refreshToken, {
+  response.cookie("refresh_token_email_engine", refreshToken, {
     maxAge: REFRESH_TOKEN_MAX_AGE,
     httpOnly: true,
     secure: IS_PRODUCTION,
