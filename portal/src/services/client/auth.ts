@@ -18,7 +18,10 @@ export function useSignInMutation() {
         title: "Log in Sucess",
         variant: "sucess",
       });
-      router.push("/dashboard");
+      // console.log(response,'response')
+      // router.push('/mail');
+      // return
+      router.replace(response.data);
     },
     onError: (error: CustomAxiosError) => {
       setFormLoading(false);

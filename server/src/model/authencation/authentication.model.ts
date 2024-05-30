@@ -13,6 +13,7 @@ async function createUser(data: CreateUserInput): Promise<User> {
     const hashedPassword = await hashPassword(data.password);
     const newUser = await prisma.user.create({
       data: {
+        displayName: "PLACEHOLDER_NAME",
         email: data.email,
         password: hashedPassword,
         role: UserRole.USER,

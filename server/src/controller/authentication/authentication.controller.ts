@@ -131,8 +131,8 @@ export async function adminLoginHandler(request: Request, response: Response) {
 export async function logoutHandler(request: Request, response: Response) {
   try {
     // Clearing the accessToken and refreshToken cookies
-    response.clearCookie("access_token_flower_box", LOGOUT_COOKIE_OPTIONS);
-    response.clearCookie("refresh_token_flower_box", LOGOUT_COOKIE_OPTIONS);
+    response.clearCookie("access_token_email_engine", LOGOUT_COOKIE_OPTIONS);
+    response.clearCookie("refresh_token_email_engine", LOGOUT_COOKIE_OPTIONS);
 
     return response
       .status(ResponseStatus.Success)

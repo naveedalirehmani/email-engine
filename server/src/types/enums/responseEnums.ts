@@ -12,7 +12,7 @@ enum ResponseStatus {
   BadGateway = 502,
   ServiceUnavailable = 503,
   GatewayTimeout = 504,
-  Redirect = 301,
+  Redirect = 302,
 }
 
 enum ResponseMessages {
