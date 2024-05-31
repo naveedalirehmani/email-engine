@@ -49,7 +49,7 @@ export default function LoginAccount() {
             <Button
               onClick={loginWithOutlook}
               disabled={isFormLoading}
-              className="w-full bg-white"
+              className="w-full bg-white dark:bg-inherit"
               variant="outline"
             >
               {isFormLoading && (
@@ -60,11 +60,11 @@ export default function LoginAccount() {
             <Button
               onClick={loginWithOutlook}
               disabled={true}
-              className="w-full bg-white"
+              className="w-full bg-white dark:bg-inherit"
               variant="outline"
             >
               {isFormLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin " />
               )}
               Login With Gmail | Coming soon...
             </Button>
