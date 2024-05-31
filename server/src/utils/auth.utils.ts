@@ -7,13 +7,27 @@ const ACCESS_TOKEN_MAX_AGE = 3600000 * 12; // 12 hour in milliseconds
 const REFRESH_TOKEN_MAX_AGE = 3.154e10; // 1 year in milliseconds
 const IS_PRODUCTION = process.env.NODE_ENV === environment.PRODUCTION;
 
-export function setUserCookies(response: Response, user: User) {
+export function setUserCookies(
+  response: Response,
+  user: User,
+  oAuthAccessToken?: string,
+) {
   const accessToken = signJWT(
-    { email: user.email, userId: `${user.id}`, role: user.role },
+    {
+      email: user.email,
+      userId: `${user.id}`,
+      role: user.role,
+      oAuthAccessToken,
+    },
     "1h",
   );
   const refreshToken = signJWT(
-    { email: user.email, userId: `${user.id}`, role: user.role },
+    {
+      email: user.email,
+      userId: `${user.id}`,
+      role: user.role,
+      oAuthAccessToken,
+    },
     "1y",
   );
 

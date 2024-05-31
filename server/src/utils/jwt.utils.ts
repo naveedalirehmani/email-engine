@@ -6,6 +6,7 @@ interface JWTPayload {
   email?: string;
   userId?: string;
   role?: string;
+  oAuthAccessToken?: string;
 }
 
 export const signJWT = (

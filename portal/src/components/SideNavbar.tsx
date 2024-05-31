@@ -4,14 +4,19 @@ import { Navbar } from "./ui/nav";
 
 type Props = { children: React.ReactNode };
 
-import { MailIcon, Send, Trash, Archive } from "lucide-react";
+import { MailIcon, Send, Trash, Archive, Plus } from "lucide-react";
 import { routes } from "@/types/routes";
 
 export default function SideNavbar({ children }: Props) {
   return (
-    <div>
+    <div className="h-screen">
       <Navbar
         links={[
+          {
+            title: "Compose",
+            href: routes.compose,
+            icon: <Plus className="h-5 w-5" />,
+          },
           {
             title: "Primary",
             href: routes.primary,

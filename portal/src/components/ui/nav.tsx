@@ -29,7 +29,7 @@ import { usePagination } from "@/hooks/usePagination";
 import { usePathname, useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { CustomAxiosError } from "@/services/api";
-import { logoutHandler } from "@/services/adminService";
+import { logoutHandler } from "@/services/admin.service";
 import { useToast } from "./use-toast";
 
 type Props = {
@@ -76,7 +76,7 @@ export function Navbar({ children, links }: Props) {
   const tab = () => {
     const parts = pathName.split("/");
     if (parts[2]) return parts[2];
-    else return 'primary';
+    else return "primary";
   };
 
   return (
@@ -183,7 +183,10 @@ export function Navbar({ children, links }: Props) {
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-        <main className="flex flex-1 flex-col gap-4 lg:gap-6">{children}</main>
+        <main className="flex flex-1 flex-col gap-4 lg:gap-6">
+          {children}
+          <div className="h-8 mt-auto bg-muted/80 border-t-[1px]"></div>
+        </main>
       </div>
     </div>
   );
