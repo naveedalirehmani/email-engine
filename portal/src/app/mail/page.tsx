@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-
 import {
   Card,
   CardContent,
@@ -18,22 +17,77 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { Search, SearchCheck } from "lucide-react";
+import { RefreshCcw, Search } from "lucide-react";
 import Image from "next/image";
+import { useGetPrimaryMail } from "@/services/client/azure";
+import MailSkeleton from "@/components/custom/skeleton/mailSkeleton";
+import { Button } from "@/components/ui/button";
+import { queryClient } from "@/lib/react-query-provider";
+import EmailContent from "@/components/custom/emailContent";
+import { truncateText } from "@/lib/utils";
+
+// Define TypeScript types
+interface Email {
+  id: string;
+  receivedDateTime: string;
+  subject: string;
+  bodyPreview: string;
+  isRead: boolean;
+  from: {
+    emailAddress: {
+      name: string;
+      address: string;
+    };
+  };
+  body: {
+    content: string;
+  };
+}
 
 export default function Home() {
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
+  const [filterText, setFilterText] = useState<string>("");
+  const [filteredEmails, setFilteredEmails] = useState<Email[]>([]);
 
   const handleDivClick = () => {
     if (inputRef.current) {
-      //@ts-ignore
       inputRef.current.focus();
     }
   };
 
+  const { data, isLoading, isError, isRefetching, refetch } =
+    useGetPrimaryMail();
+
+  useEffect(() => {
+    if (data?.data.emails) {
+      const emails: Email[] = data.data.emails;
+      if (filterText.trim() === "") {
+        setFilteredEmails(emails);
+      } else {
+        const filtered = emails.filter((email) =>
+          email.subject.toLowerCase().includes(filterText.toLowerCase()),
+        );
+        setFilteredEmails(filtered);
+      }
+    }
+  }, [data, filterText]);
+
+  if (isLoading || isRefetching) {
+    return <MailSkeleton />;
+  }
+
+  if (isError) {
+    return <div>Cannot fetch Mails, something went wrong...</div>;
+  }
+
+  const handleEmailClick = (email: Email) => {
+    setSelectedEmail(email);
+  };
+
   return (
-    <div className="h-screen">
-      <ResizablePanelGroup direction="horizontal" className="h-screen w-full">
+    <div>
+      <ResizablePanelGroup direction="horizontal" className="w-full">
         <ResizablePanel defaultSize={30} minSize={20}>
           <div className="p-4 pb-0">
             <div
@@ -45,80 +99,108 @@ export default function Home() {
                 ref={inputRef}
                 className="border-none outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                 placeholder="Search"
+                value={filterText}
+                onChange={(e) => setFilterText(e.target.value)}
               ></Input>
             </div>
           </div>
-          <ScrollArea className="flex h-full w-full flex-col space-y-2 rounded-md p-4">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(() => {
-              return (
-                <Card className="mt-2 w-full cursor-pointer" key="1">
-                  <CardHeader className="p-4">
+          <div className="flex items-center justify-between p-4 pb-0 capitalize">
+            <p>All Mails</p>
+            <Button onClick={() => refetch()} variant="ghost">
+              <RefreshCcw size={16} className="mr-2"></RefreshCcw>
+              Refresh
+            </Button>
+          </div>
+          <ScrollArea className="flex h-[calc(100vh-240px)] w-full flex-col space-y-2 rounded-md p-4 pt-0">
+            {filteredEmails.length > 0 ? (
+              filteredEmails.map((email) => (
+                <Card
+                  className="mt-2 w-full cursor-pointer"
+                  key={email.id}
+                  onClick={() => handleEmailClick(email)}
+                >
+                  <CardHeader className="p-4 pb-0">
                     <CardTitle className="text-md flex items-center justify-between">
-                      <span>William Smith</span>
+                      <span>{email.from.emailAddress.name}</span>
                       <span className="text-xs font-medium text-gray-500">
-                        7 Months ago
+                        {new Date(email.receivedDateTime).toLocaleDateString()}
                       </span>
                     </CardTitle>
                     <CardDescription className="mt-0 text-primary">
-                      Meeting tomorrow
+                      {email.subject}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-4 pt-0 text-sm text-gray-400">
-                    <p>
-                      Hi, let&apos;s have a meeting tomorrow to discuss the
-                      project. I&apos;ve been reviewing the project details and
-                      have some ideas I&apos;d like to share. It&apos;s crucial
-                      that we align on our next steps to ensure the
-                      project&apos;s success. Please come prepared with any
-                      questions or insights you may have. Looking forward to our
-                      meeting! Best regards, William
-                    </p>
+                  <CardContent className="p-4 pt-0 text-xs text-gray-400">
+                    <p>{truncateText(email.bodyPreview, 100)}</p>
                   </CardContent>
                   <CardFooter className="space-x-2">
-                    <Badge variant="outline">meeting</Badge>
-                    <Badge>Work</Badge>
-                    <Badge variant="outline">important</Badge>
+                    {email.isRead ? (
+                      <Badge variant="outline">Read</Badge>
+                    ) : (
+                      <Badge>Unread</Badge>
+                    )}
                   </CardFooter>
                 </Card>
-              );
-            })}
+              ))
+            ) : (
+              <div className="p-4 text-center">No emails found.</div>
+            )}
           </ScrollArea>
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={70} minSize={20}>
-          <div className="flex space-x-4 border-b-2 p-4">
-            <div className="h-12 w-12 overflow-hidden rounded-full">
-              <Image
-                src="/profile_placeholder.jpg"
-                className="h-12 w-12"
-                alt="Image"
-                width="40"
-                height="40"
-              ></Image>
-            </div>
-            <div className="w-full">
-              <div className="flex w-full items-center justify-between">
-                <span>William Smith</span>
-                <span className="text-xs font-medium text-gray-500">
-                  Oct 22, 2023, 9:00:00 AM
-                </span>
+        <ResizablePanel defaultSize={70} minSize={40}>
+          {selectedEmail ? (
+            <div className="h-full">
+              <div className="flex space-x-4 border-b-2 p-4">
+                <div className="h-12 w-12 overflow-hidden rounded-full">
+                  <Image
+                    src="/profile_placeholder.jpg"
+                    className="h-12 w-12"
+                    alt="Image"
+                    width="40"
+                    height="40"
+                  ></Image>
+                </div>
+                <div className="w-full">
+                  <div className="flex w-full items-center justify-between">
+                    <span>{selectedEmail.from.emailAddress.name}</span>
+                    <span className="text-xs font-medium text-gray-500">
+                      {new Date(
+                        selectedEmail.receivedDateTime,
+                      ).toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="subject text-xs text-gray-700 dark:text-gray-400">
+                    {selectedEmail.subject}
+                  </p>
+                  <p className="from text-xs text-gray-700 dark:text-gray-400">
+                    <span className="font-semibold">From :</span>{" "}
+                    {selectedEmail.from.emailAddress.address}
+                  </p>
+                </div>
               </div>
-              <p className="subject text-xs text-gray-700">Meeting Tomorrow</p>
-              <p className="from text-xs text-gray-700">
-                Reply-To: williamsmith@example.com
-              </p>
+              <div className="h-[calc(100vh-240px)] overflow-scroll p-4">
+                <p className="mail text-gray-700 dark:text-white">
+                  <EmailContent
+                    content={selectedEmail.body.content}
+                  ></EmailContent>
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="p-4">
-            <p className="mail text-gray-700">
-              Hi, let&apos;s have a meeting tomorrow to discuss the project.
-              I&apos;ve been reviewing the project details and have some ideas
-              I&apos;d like to share. It&apos;s crucial that we align on our
-              next steps to ensure the project&apos;s success. Please come
-              prepared with any questions or insights you may have. Looking
-              forward to our meeting! Best regards, William
-            </p>
-          </div>
+          ) : (
+            <div className="flex h-[800px] w-full flex-col justify-center p-4">
+              <p className="mt-4 text-lg">
+                Select an email to view its details
+              </p>
+              <Image
+                src="/bg.svg"
+                alt="Image"
+                width="1920"
+                height="1080"
+                className="h-full w-full rounded-lg object-cover dark:brightness-[0.2] dark:grayscale"
+              />
+            </div>
+          )}
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
