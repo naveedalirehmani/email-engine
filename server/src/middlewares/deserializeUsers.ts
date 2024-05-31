@@ -8,6 +8,7 @@ interface JWTPayload {
   email: string;
   userId: string;
   role: string;
+  oAuthAccessToken: string;
 }
 
 declare module "express-serve-static-core" {
@@ -24,8 +25,8 @@ async function deserializeUser(
   response: Response,
   next: NextFunction,
 ) {
-  const accessToken = request.cookies["access_token_flower_box"];
-  const refreshToken = request.cookies["refresh_token_flower_box"];
+  const accessToken = request.cookies["access_token_email_engine"];
+  const refreshToken = request.cookies["refresh_token_email_engine"];
 
   console.log({ accessToken, refreshToken });
 

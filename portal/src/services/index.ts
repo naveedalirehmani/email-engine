@@ -2,4 +2,4 @@ export {
   uploadProduct,
   loginHandler,
   fetchProduct
-} from "./adminService";
+} from "./admin.service";

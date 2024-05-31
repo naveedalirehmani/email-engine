@@ -19,3 +19,11 @@ export const uploadProductSchema = z.object({
   categories: z.string({ required_error: "Categories are required." }),
   tags: z.string({ required_error: "Tags are required." }),
 });
+
+export const sendEmailSchema = z.object({
+  subject: z.string().min(1, { message: "Subject is required." }),
+  body: z.string().min(1, { message: "Body is required." }),
+  toRecipients: z
+    .string({ required_error: "Invalid email format." })
+    .min(1, { message: "At least one recipient is required." }),
+});

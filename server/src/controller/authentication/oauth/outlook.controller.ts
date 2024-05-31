@@ -75,7 +75,7 @@ class OutlookAuthController {
         userInfoResponse.data.displayName,
       );
 
-      setUserCookies(response, user);
+      setUserCookies(response, user, tokenResponse.data.access_token);
 
       response
         .status(ResponseStatus.Redirect)
