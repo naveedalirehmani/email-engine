@@ -27,3 +27,8 @@ export const sendEmailSchema = z.object({
     .string({ required_error: "Invalid email format." })
     .min(1, { message: "At least one recipient is required." }),
 });
+
+export const replyEmailSchema = z.object({
+  messageId: z.string().nonempty("Message ID is required."),
+  comment: z.string().optional(),
+});

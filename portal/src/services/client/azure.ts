@@ -1,17 +1,13 @@
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import * as azure from "../azure.service";
-// import { queryClient } from "@/lib/react-query-provider";
+import AzureMailService from "../azure.service";
 import { CustomAxiosError } from "../api";
-import { useRouter } from "next/router";
 import { useState } from "react";
 
 export function useGetPrimaryMail() {
-  const { toast } = useToast();
-
   const query = useQuery({
     queryKey: ["primaryMail"],
-    queryFn: azure.getPrimaryMails,
+    queryFn: AzureMailService.getPrimaryMails,
   });
 
   return query;
@@ -19,7 +15,7 @@ export function useGetPrimaryMail() {
 export function useTrashMail() {
   const query = useQuery({
     queryKey: ["trashMail"],
-    queryFn: azure.getTashMails,
+    queryFn: AzureMailService.getTrashMails,
   });
 
   return query;
@@ -27,7 +23,7 @@ export function useTrashMail() {
 export function useSentMail() {
   const query = useQuery({
     queryKey: ["sentMail"],
-    queryFn: azure.getSentMail,
+    queryFn: AzureMailService.getSentMail,
   });
 
   return query;
@@ -35,7 +31,7 @@ export function useSentMail() {
 export function useJunkMail() {
   const query = useQuery({
     queryKey: ["junkMail"],
-    queryFn: azure.getJunkMails,
+    queryFn: AzureMailService.getJunkMails,
   });
 
   return query;
@@ -46,14 +42,14 @@ export function usePostEmail() {
   const [isFormLoading, setFormLoading] = useState(false);
 
   const mutation = useMutation({
-    mutationFn: azure.sendMail,
+    mutationFn: AzureMailService.sendMail,
     onSuccess: (response) => {
       setFormLoading(false);
       toast({
         title: "Email Was Sent",
         variant: "sucess",
       });
-      console.log(response,'response')
+      console.log(response, "response");
     },
     onError: (error: CustomAxiosError) => {
       setFormLoading(false);
@@ -71,4 +67,45 @@ export function usePostEmail() {
       setFormLoading,
     },
   };
+}
+
+export function useReplyToEmail() {
+  const { toast } = useToast();
+  const [isFormLoading, setFormLoading] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: AzureMailService.replyMail,
+    onSuccess: (response) => {
+      setFormLoading(false);
+      toast({
+        title: "Email Was Sent",
+        variant: "sucess",
+      });
+      console.log(response, "response");
+    },
+    onError: (error: CustomAxiosError) => {
+      setFormLoading(false);
+      const message = error.response?.data?.message || error.message;
+      toast({
+        title: message,
+        variant: "destructive",
+      });
+    },
+  });
+  return {
+    mutation,
+    formStatus: {
+      isFormLoading,
+      setFormLoading,
+    },
+  };
+}
+
+export function useMailSummary() {
+  const query = useQuery({
+    queryKey: ["mailSummary"],
+    queryFn: AzureMailService.getMailSummary,
+  });
+
+  return query;
 }

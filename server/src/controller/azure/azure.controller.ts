@@ -4,7 +4,7 @@ import {
   ResponseStatus,
   ResponseMessages,
 } from "../../types/enums/responseEnums";
-import { sendEmailSchema } from "../../schema/validation";
+import { replyEmailSchema, sendEmailSchema } from "../../schema/validation";
 import { z } from "zod";
 
 const GRAPH_API_BASE_URL = "https://graph.microsoft.com/v1.0";
@@ -165,7 +165,7 @@ export async function sendEmail(request: Request, response: Response) {
         .json({ message: "An access token is required." });
     }
     const validatedData = sendEmailSchema.parse(request.body);
-    console.log(validatedData,'validatedData')
+    console.log(validatedData, "validatedData");
     const emailData = {
       message: {
         subject: validatedData.subject,
@@ -201,6 +201,126 @@ export async function sendEmail(request: Request, response: Response) {
       .json({ message: ResponseMessages.Success });
   } catch (error) {
     console.error("error:", error);
+    if (error instanceof z.ZodError) {
+      return response
+        .status(ResponseStatus.BadGateway)
+        .json({ message: error.errors[0].message });
+    }
+    return response
+      .status(ResponseStatus.InternalServerError)
+      .json({ message: "An unexpected error occurred." });
+  }
+}
+
+export async function getTotalEmailCount(request: Request, response: Response) {
+  try {
+    const accessToken = request.user?.oAuthAccessToken;
+    if (!accessToken) {
+      return response
+        .status(ResponseStatus.BadRequest)
+        .json({ message: "An access token is required." });
+    }
+
+    const profileUrl = `${GRAPH_API_BASE_URL}/me`;
+    const profileResponse = await axios.get(profileUrl, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const userProfile = profileResponse.data;
+    const userName = userProfile.displayName;
+
+    const profilePictureUrl = `${GRAPH_API_BASE_URL}/me/photo/$value`;
+    let userProfilePicture = null;
+    try {
+      const pictureResponse = await axios.get(profilePictureUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        responseType: "arraybuffer",
+      });
+      const base64Image = Buffer.from(pictureResponse.data, "binary").toString(
+        "base64",
+      );
+      userProfilePicture = `data:image/jpeg;base64,${base64Image}`;
+    } catch (pictureError) {
+      console.error("Error fetching profile picture:", pictureError);
+      userProfilePicture = null;
+    }
+
+    const folderNames = [
+      { folder: "inbox", value: "/mail" },
+      { folder: "junkemail", value: "/mail/junk" },
+      { folder: "deleteditems", value: "/mail/trash" },
+      { folder: "sentitems", value: "/mail/sent" },
+    ];
+    const emailCountsPromises = folderNames.map(async (folder) => {
+      const url = `${GRAPH_API_BASE_URL}/me/mailFolders/${folder.folder}/messages/$count`;
+      const countResponse = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          ConsistencyLevel: "eventual",
+        },
+      });
+      return { folder, count: countResponse.data };
+    });
+
+    const emailCounts = await Promise.all(emailCountsPromises);
+
+    const emailCountsSummary: { [key: string]: number } = {};
+    emailCounts.forEach(({ folder, count }) => {
+      emailCountsSummary[folder.value] = count;
+    });
+
+    return response.status(ResponseStatus.Success).json({
+      message: ResponseMessages.Success,
+      emailCounts: emailCountsSummary,
+      userProfile,
+      userName,
+      userProfilePicture,
+    });
+  } catch (error) {
+    console.error("Error fetching email counts:", error);
+    return response
+      .status(ResponseStatus.InternalServerError)
+      .json({ message: ResponseMessages.InternalServerError });
+  }
+}
+
+export async function replyToEmail(request: Request, response: Response) {
+  try {
+    const accessToken = request.user?.oAuthAccessToken;
+    if (!accessToken) {
+      return response
+        .status(ResponseStatus.BadRequest)
+        .json({ message: "An access token is required." });
+    }
+
+    const validatedData = replyEmailSchema.parse(request.body);
+    const { messageId, comment } = validatedData;
+
+    const emailReplyData = {
+      comment: comment || "",
+    };
+
+    const url = `${GRAPH_API_BASE_URL}/me/messages/${messageId}/reply`;
+    const apiResponse = await axios.post(url, emailReplyData, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (apiResponse.status === 202) {
+      return response
+        .status(ResponseStatus.Success)
+        .json({ message: ResponseMessages.Success });
+    } else {
+      throw new Error("Failed to send email reply.");
+    }
+  } catch (error) {
+    console.error("Error replying to email:", error);
     if (error instanceof z.ZodError) {
       return response
         .status(ResponseStatus.BadGateway)
