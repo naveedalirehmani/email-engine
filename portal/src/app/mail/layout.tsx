@@ -5,9 +5,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-        <SideNavbar >
-          {children}
-        </SideNavbar>
-  );
+  return <SideNavbar>{children}</SideNavbar>;
 }

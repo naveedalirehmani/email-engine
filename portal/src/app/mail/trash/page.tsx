@@ -1,35 +1,23 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { useGetPrimaryMail, useTrashMail } from "@/services/client/azure";
+import { useTrashMail } from "@/services/client/azure";
 import MailSkeleton from "@/components/custom/skeleton/mailSkeleton";
 import { SearchBar } from "@/components/custom/EmailSearchBar";
 import { EmailList } from "@/components/custom/EmailList";
 import { EmailDetail } from "@/components/custom/EmailDetail";
 import Image from "next/image";
 import { Email } from "@/types/types";
+import { useFilteredEmails } from "@/hooks/useFilteredEmails";
 
 export default function Home() {
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
   const [filterText, setFilterText] = useState<string>("");
-  const [filteredEmails, setFilteredEmails] = useState<Email[]>([]);
 
   const { data, isLoading, isError, isRefetching, refetch } = useTrashMail();
 
-  useEffect(() => {
-    if (data?.data.emails) {
-      const emails: Email[] = data.data.emails;
-      if (filterText.trim() === "") {
-        setFilteredEmails(emails);
-      } else {
-        const filtered = emails.filter((email) =>
-          email.subject.toLowerCase().includes(filterText.toLowerCase()),
-        );
-        setFilteredEmails(filtered);
-      }
-    }
-  }, [data, filterText]);
+  const filteredEmails = useFilteredEmails({ data, filterText });
 
   if (isLoading || isRefetching) {
     return <MailSkeleton />;
