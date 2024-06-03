@@ -2,6 +2,8 @@ import React, { useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { queryClient } from "@/lib/react-query-provider";
+import { Endpoints } from "@/types/endpoint";
 
 interface SearchBarProps {
   filterText: string;
@@ -17,6 +19,11 @@ export function SearchBar({ filterText, setFilterText, refetch }: SearchBarProps
       inputRef.current.focus();
     }
   };
+
+  const handleRefetch = () =>{
+    refetch();
+    queryClient.invalidateQueries({ queryKey: [Endpoints.SUMMARY] })
+  }
 
   return (
     <>
@@ -37,7 +44,7 @@ export function SearchBar({ filterText, setFilterText, refetch }: SearchBarProps
       </div>
       <div className="flex items-center justify-between p-4 pb-0 capitalize">
         <p>All Mails</p>
-        <Button onClick={refetch} variant="ghost">
+        <Button onClick={handleRefetch} variant="ghost">
           <RefreshCcw size={16} className="mr-2"></RefreshCcw>
           Refresh
         </Button>
