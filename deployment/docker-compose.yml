@@ -5,12 +5,14 @@ services:
     build:
       context: ../portal
     ports:
-      - "3000:3000"
+      - "3000:3000" 
     depends_on:
       - server
       - db
-    env_file:
-      - ../portal/.env
+    enivronment:
+      - NEXT_PUBLIC_SERVER=http://server:4000/v1
+    networks:
+      - custom_bridge
 
   server:
     build:
@@ -21,6 +23,8 @@ services:
       - db
     env_file:
       - ../server/.env
+    networks:
+      - custom_bridge
 
   db:
     image: mysql:8.0
@@ -31,6 +35,12 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - custom_bridge
 
 volumes:
   db_data:
+
+networks:
+  custom_bridge:
+    driver: bridge

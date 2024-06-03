@@ -64,7 +64,7 @@ export default function LoginAccount() {
               variant="outline"
             >
               {isFormLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin " />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
               Login With Gmail | Coming soon...
             </Button>

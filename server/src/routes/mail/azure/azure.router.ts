@@ -6,6 +6,8 @@ import {
   getTrashEmails,
   getSentEmails,
   sendEmail,
+  getTotalEmailCount,
+  replyToEmail,
 } from "../../../controller/azure/azure.controller";
 
 const AzureRouter = Router();
@@ -26,6 +28,14 @@ AzureRouter.get("/trash", (request, response) =>
 
 AzureRouter.get("/sent", (request, response) =>
   getSentEmails(request, response),
+);
+
+AzureRouter.get("/summary", (request, response) =>
+  getTotalEmailCount(request, response),
+);
+
+AzureRouter.post("/reply", (request, response) =>
+  replyToEmail(request, response),
 );
 
 export default AzureRouter;

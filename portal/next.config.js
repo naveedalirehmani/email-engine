@@ -1,4 +1,3 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
     domains: ["flowerbox.s3.ca-central-1.amazonaws.com","api.dicebear.com"],
@@ -8,7 +7,7 @@ const nextConfig = {
     return [
       {
         source: "/",
-        destination: "/dashboard",
+        destination: "/mail",
         permanent: true,
       },
     ];

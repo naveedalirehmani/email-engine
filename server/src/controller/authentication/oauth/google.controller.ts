@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { OAuth2Client } from "google-auth-library";
 
 import { setUserCookies } from "../../../utils/auth.utils";
-import { findOrCreateUser } from "../../../model/authencation/oauth/oauth.model";
+import { findOrCreateUser } from "@model/authencation/oauth/oauth.model";
 import {
   ResponseStatus,
   ResponseMessages,

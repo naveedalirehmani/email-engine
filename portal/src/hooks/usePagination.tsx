@@ -3,6 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
+// for paginated mails, not yet used...
 export const usePagination = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
