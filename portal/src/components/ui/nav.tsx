@@ -1,14 +1,11 @@
-/** @format */
-
 "use client";
 
 import Link from "next/link";
 import {
   CircleUser,
-  Flower,
   LogOutIcon,
   Mail,
-  MailCheck,
+  MailSearch,
   Menu,
   Moon,
   SunMoon,
@@ -22,24 +19,46 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
-import { usePagination } from "@/hooks/usePagination";
-import { usePathname, useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import { CustomAxiosError } from "@/services/api";
-import { logoutHandler } from "@/services/admin.service";
-import { useToast } from "./use-toast";
+import { usePathname } from "next/navigation";
+import { useMailSummary } from "@/services/client/azure";
+import { useLogout } from "@/services/client/auth";
+
+type EmailCountRoutes =
+  | "/mail"
+  | "/mail/junk"
+  | "/mail/trash"
+  | "/mail/sent"
+  | "/mail/compose";
 
 type Props = {
   children: React.ReactNode;
   links: {
     title: string;
-    href: string;
+    href: EmailCountRoutes;
     icon: any;
   }[];
 };
+
+interface summary {
+  emailCounts: {
+    "/mail/compose": number;
+    "/mail": number;
+    "/mail/junk": number;
+    "/mail/trash": number;
+    "/mail/sent": number;
+  };
+}
 
 export function Navbar({ children, links }: Props) {
   const { theme, setTheme } = useTheme();
@@ -52,26 +71,10 @@ export function Navbar({ children, links }: Props) {
 
   const pathName = usePathname();
 
-  const router = useRouter();
-  const { toast } = useToast();
-
-  const mutation = useMutation({
-    mutationFn: logoutHandler,
-    onSuccess: (response) => {
-      toast({
-        title: "logout Successful",
-        variant: "sucess",
-      });
-      router.push("/sign-in");
-    },
-    onError: (error: CustomAxiosError) => {
-      const message = error.response?.data?.message || error.message;
-      toast({
-        title: message,
-        variant: "destructive",
-      });
-    },
-  });
+  const {
+    mutation: { mutate },
+    // formStatus: { isFormLoading, setFormLoading },
+  } = useLogout();
 
   const tab = () => {
     const parts = pathName.split("/");
@@ -79,15 +82,48 @@ export function Navbar({ children, links }: Props) {
     else return "primary";
   };
 
+  const { data, isLoading, isError, isRefetching } = useMailSummary();
+
+  if (isLoading || isRefetching) {
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center">
+        <MailSearch className="animate-bounce" size={100} />
+        <p className="text-gray-700">all your mails at one place...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div>Cannot fetch summary..</div>;
+  }
+
+  const result: summary = data?.data;
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
+            {/* <Link href="/" className="flex items-center gap-2 font-semibold">
               <Mail />
               <span className="">Email Engine</span>
-            </Link>
+            </Link> */}
+            <Select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Email Provider" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="outlook" defaultChecked>Outlook</SelectItem>
+                  <SelectItem value="gmail" disabled>
+                    Gmail | Coming Soon...
+                  </SelectItem>
+                  <SelectItem value="yahoo" disabled>
+                    Yahoo | Coming Soon...
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
@@ -97,15 +133,20 @@ export function Navbar({ children, links }: Props) {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "my-1 flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
+                      "my-1 mr-2 flex w-full items-center gap-3 rounded-lg px-3 py-2 transition-all",
                       {
                         "bg-primary text-white dark:text-black":
                           item.href == pathName,
                       },
                     )}
                   >
-                    {item.icon}
-                    {item.title}
+                    <span className="flex items-center justify-center">
+                      <span className="mr-2">{item.icon}</span>
+                      {item.title}
+                    </span>
+                    <span className="ml-auto rounded-full text-center">
+                      {result.emailCounts[item.href]}
+                    </span>
                   </Link>
                 );
               })}
@@ -115,7 +156,6 @@ export function Navbar({ children, links }: Props) {
       </div>
       <div className="flex flex-col">
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <h1 className="text-xl font-semibold capitalize">{tab()}</h1>
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -143,6 +183,7 @@ export function Navbar({ children, links }: Props) {
                 })}
               </nav>
             </SheetContent>
+            <h1 className="text-xl font-semibold capitalize">{tab()}</h1>
           </Sheet>
           <div className="w-full flex-1"></div>
           <DropdownMenu>
@@ -158,7 +199,7 @@ export function Navbar({ children, links }: Props) {
               <DropdownMenuItem
                 className="cursor-pointer"
                 onClick={() => {
-                  mutation.mutate();
+                  mutate();
                 }}
               >
                 <LogOutIcon className="mr-2" size={18} />
@@ -183,9 +224,11 @@ export function Navbar({ children, links }: Props) {
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-        <main className="flex flex-1 flex-col gap-4 lg:gap-6">
+        <main className="flex max-h-screen flex-1 flex-col gap-4 lg:gap-6">
           {children}
-          <div className="h-8 mt-auto bg-muted/80 border-t-[1px]"></div>
+          <div className="mt-auto flex h-8 items-center justify-center border-t-[1px] bg-muted/80 text-xs text-gray-400">
+            all your mails at one place ❤️
+          </div>
         </main>
       </div>
     </div>
