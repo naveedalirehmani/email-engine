@@ -1,5 +1,6 @@
 export * as ServerTypes from "./responses";
 export * from "./routes";
+export * from './endpoint';
 
 export interface Email {
   id: string;

@@ -3,35 +3,49 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import AzureMailService from "../azure.service";
 import { CustomAxiosError } from "../api";
 import { useState } from "react";
+import { Endpoints } from "@/types/endpoint";
+
+// keeping seperate hooks for all pages, for any future computed properties.
 
 export function useGetPrimaryMail() {
   const query = useQuery({
-    queryKey: ["primaryMail"],
+    queryKey: [Endpoints.PRIMARY],
     queryFn: AzureMailService.getPrimaryMails,
   });
-
   return query;
 }
+
 export function useTrashMail() {
   const query = useQuery({
-    queryKey: ["trashMail"],
+    queryKey: [Endpoints.TRASH],
     queryFn: AzureMailService.getTrashMails,
   });
 
   return query;
 }
+
 export function useSentMail() {
   const query = useQuery({
-    queryKey: ["sentMail"],
+    queryKey: [Endpoints.SENT],
     queryFn: AzureMailService.getSentMail,
   });
 
   return query;
 }
+
 export function useJunkMail() {
   const query = useQuery({
-    queryKey: ["junkMail"],
+    queryKey: [Endpoints.JUNK],
     queryFn: AzureMailService.getJunkMails,
+  });
+
+  return query;
+}
+
+export function useMailSummary() {
+  const query = useQuery({
+    queryKey: ["mailSummary"],
+    queryFn: AzureMailService.getMailSummary,
   });
 
   return query;
@@ -42,6 +56,7 @@ export function usePostEmail() {
   const [isFormLoading, setFormLoading] = useState(false);
 
   const mutation = useMutation({
+    mutationKey: [Endpoints.SEND],
     mutationFn: AzureMailService.sendMail,
     onSuccess: (response) => {
       setFormLoading(false);
@@ -74,6 +89,7 @@ export function useReplyToEmail() {
   const [isFormLoading, setFormLoading] = useState(false);
 
   const mutation = useMutation({
+    mutationKey: [Endpoints.REPLY],
     mutationFn: AzureMailService.replyMail,
     onSuccess: (response) => {
       setFormLoading(false);
@@ -99,13 +115,4 @@ export function useReplyToEmail() {
       setFormLoading,
     },
   };
-}
-
-export function useMailSummary() {
-  const query = useQuery({
-    queryKey: ["mailSummary"],
-    queryFn: AzureMailService.getMailSummary,
-  });
-
-  return query;
 }

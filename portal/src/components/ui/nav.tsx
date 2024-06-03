@@ -82,9 +82,9 @@ export function Navbar({ children, links }: Props) {
     else return "primary";
   };
 
-  const { data, isLoading, isError, isRefetching } = useMailSummary();
+  const { data, isLoading, isError } = useMailSummary();
 
-  if (isLoading || isRefetching) {
+  if (isLoading) {
     return (
       <div className="flex h-screen w-screen flex-col items-center justify-center">
         <MailSearch className="animate-bounce" size={100} />

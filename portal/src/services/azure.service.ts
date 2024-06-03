@@ -1,4 +1,5 @@
 import Instance from "@/services/api";
+import { Endpoints } from "@/types/endpoint";
 
 interface EmailData {
   subject?: string;
@@ -10,38 +11,39 @@ interface EmailData {
 }
 
 export default class AzureMailService {
+  private static Azure = "/mail-data/azure";
   static getPrimaryMails() {
-    const url = `/mail-data/azure/primary`;
+    const url = `${AzureMailService.Azure}/${Endpoints.PRIMARY}`;
     return Instance.get(url);
   }
 
   static getJunkMails() {
-    const url = `/mail-data/azure/junk`;
+    const url = `${AzureMailService.Azure}/${Endpoints.JUNK}`;
     return Instance.get(url);
   }
 
   static getTrashMails() {
-    const url = `/mail-data/azure/trash`;
+    const url = `${AzureMailService.Azure}/${Endpoints.TRASH}`;
     return Instance.get(url);
   }
 
   static getSentMail() {
-    const url = `/mail-data/azure/sent`;
+    const url = `${AzureMailService.Azure}/${Endpoints.SENT}`;
     return Instance.get(url);
   }
 
   static sendMail(emailData: EmailData) {
-    const url = `/mail-data/azure/send`;
+    const url = `${AzureMailService.Azure}/${Endpoints.SEND}`;
     return Instance.post(url, emailData);
   }
 
   static getMailSummary() {
-    const url = `/mail-data/azure/summary`;
+    const url = `${AzureMailService.Azure}/${Endpoints.SUMMARY}`;
     return Instance.get(url);
   }
 
   static replyMail(emailData: EmailData) {
-    const url = `/mail-data/azure/reply`;
+    const url = `${AzureMailService.Azure}/${Endpoints.REPLY}`;
     return Instance.post(url, emailData);
   }
 }
