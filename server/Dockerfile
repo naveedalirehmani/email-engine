@@ -1,19 +1,19 @@
-FROM node:20.9.0-alpine
+FROM node:lts-alpine3.20
 
 WORKDIR /app
 
 COPY package*.json ./
+
 RUN npm install
 
 COPY . .
 
-RUN npm run build
-
 WORKDIR /app/src
 
-RUN npx prisma migrate deploy
 RUN npx prisma generate
+
+RUN npm run build
 
 EXPOSE 4000
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
