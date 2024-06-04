@@ -8,6 +8,7 @@ import {
   MailSearch,
   Menu,
   Moon,
+  Send,
   SunMoon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -96,8 +97,8 @@ export function Navbar({ children, links }: Props) {
   if (isLoading) {
     return (
       <div className="flex h-screen w-screen flex-col items-center justify-center">
-        <MailSearch className="animate-bounce" size={100} />
-        <p className="text-gray-700">all your mails at one place...</p>
+        <MailSearch className="animate-bounce" size={100} strokeWidth={1} />
+        {/* <p className="text-gray-700 text-xl">Your Inbox, Unified and Organized...</p> */}
       </div>
     );
   }
