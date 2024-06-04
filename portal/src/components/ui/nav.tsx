@@ -33,6 +33,8 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { useMailSummary } from "@/services/client/azure";
 import { useLogout } from "@/services/client/auth";
+import { useEffect } from "react";
+import { mailSocket } from "@/services/socket/socket";
 
 type EmailCountRoutes =
   | "/mail"
@@ -61,20 +63,14 @@ interface summary {
 }
 
 export function Navbar({ children, links }: Props) {
+  const pathName = usePathname();
   const { theme, setTheme } = useTheme();
+
+  const isActive = theme === "light";
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
-
-  const isActive = theme === "light";
-
-  const pathName = usePathname();
-
-  const {
-    mutation: { mutate },
-    // formStatus: { isFormLoading, setFormLoading },
-  } = useLogout();
 
   const tab = () => {
     const parts = pathName.split("/");
@@ -82,6 +78,19 @@ export function Navbar({ children, links }: Props) {
     else return "primary";
   };
 
+  useEffect(() => {
+    mailSocket.on("connected", connected);
+    return () => {
+      mailSocket.off("connected");
+    };
+  }, []);
+
+  // need to setup.
+  function connected(value: any) {}
+
+  const {
+    mutation: { mutate },
+  } = useLogout();
   const { data, isLoading, isError } = useMailSummary();
 
   if (isLoading) {
@@ -101,7 +110,7 @@ export function Navbar({ children, links }: Props) {
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      <div className="hidden border-r bg-muted/40 md:block">
+      <div className="hidden border-r bg-muted/90 dark:bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             {/* <Link href="/" className="flex items-center gap-2 font-semibold">
@@ -114,7 +123,9 @@ export function Navbar({ children, links }: Props) {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="outlook" defaultChecked>Outlook</SelectItem>
+                  <SelectItem value="outlook" defaultChecked>
+                    Outlook
+                  </SelectItem>
                   <SelectItem value="gmail" disabled>
                     Gmail | Coming Soon...
                   </SelectItem>
@@ -155,7 +166,7 @@ export function Navbar({ children, links }: Props) {
         </div>
       </div>
       <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+        <header className="flex h-14 items-center gap-4 border-b bg-muted/90 dark:bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -226,7 +237,7 @@ export function Navbar({ children, links }: Props) {
         </header>
         <main className="flex max-h-screen flex-1 flex-col gap-4 lg:gap-6">
           {children}
-          <div className="mt-auto flex h-8 items-center justify-center border-t-[1px] bg-muted/80 text-xs text-gray-400">
+          <div className="mt-auto flex h-8 items-center justify-center border-t-[1px] bg-muted/90 dark:bg-muted/40 text-xs text-gray-400">
             all your mails at one place ❤️
           </div>
         </main>

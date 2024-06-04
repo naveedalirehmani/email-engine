@@ -30,13 +30,12 @@ export default function Home() {
   const handleEmailClick = (email: Email) => {
     setSelectedEmail(email);
   };
-
   return (
     <div>
       <ResizablePanelGroup direction="horizontal" className="w-full">
         <ResizablePanel defaultSize={30} minSize={20}>
           <SearchBar filterText={filterText} setFilterText={setFilterText} refetch={refetch} />
-          <EmailList emails={filteredEmails} onEmailClick={handleEmailClick} />
+          <EmailList emails={filteredEmails} onEmailClick={handleEmailClick} selectedEmail={selectedEmail} />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={70} minSize={40}>

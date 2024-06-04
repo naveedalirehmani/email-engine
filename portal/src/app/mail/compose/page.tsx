@@ -17,22 +17,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { usePostEmail } from "@/services/client/azure";
 import { Loader2, Send } from "lucide-react";
-
-const FormSchema = z.object({
-  subject: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  toRecipients: z.string().email({
-    message: "Invalid email address.",
-  }),
-  body: z.string().min(1, {
-    message: "Message cannot be empty.",
-  }),
-});
+import { mailPostSchema } from "@/schema/zod";
 
 export default function Compose() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof mailPostSchema>>({
+    resolver: zodResolver(mailPostSchema),
   });
 
   const {
@@ -40,7 +29,7 @@ export default function Compose() {
     formStatus: { isFormLoading, setFormLoading },
   } = usePostEmail();
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit(data: z.infer<typeof mailPostSchema>) {
     console.log(data, "data");
     setFormLoading(true);
     mutate(data);

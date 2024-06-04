@@ -1,26 +1,40 @@
 import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { truncateText } from "@/lib/utils";
+import { cn, truncateText } from "@/lib/utils";
 import { Email } from "@/types/types";
 
 interface EmailListProps {
   emails: Email[];
   onEmailClick: (email: Email) => void;
+  selectedEmail: Email | null;
 }
 
-export function EmailList({ emails, onEmailClick }: EmailListProps) {
+export function EmailList({
+  emails,
+  onEmailClick,
+  selectedEmail,
+}: EmailListProps) {
   return (
     <ScrollArea className="flex h-[calc(100vh-240px)] w-full flex-col space-y-2 rounded-md p-4 pt-0">
       {emails.length > 0 ? (
         emails.map((email) => (
           <Card
-            className="mt-2 w-full cursor-pointer"
+            className={cn("mt-2 w-full cursor-pointer", {
+              "bg-muted/90": selectedEmail?.id == email.id,
+            })}
             key={email.id}
             onClick={() => onEmailClick(email)}
           >
-            <CardHeader className="p-4 pb-0">
+            <CardHeader className="p-4 pb-0 ">
               <CardTitle className="text-md flex items-center justify-between">
                 <span>{email.from.emailAddress.name}</span>
                 <span className="text-xs font-medium text-gray-500">

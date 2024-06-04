@@ -35,7 +35,6 @@ async function deserializeUser(
   }
 
   const { payload, expired } = verifyJWT(accessToken);
-
   if (payload) {
     request.user = payload as JWTPayload;
     return next();
@@ -48,7 +47,6 @@ async function deserializeUser(
 
   const refreshResult = verifyJWT(refreshToken);
   const refreshPayload = refreshResult.payload as JWTPayload | null;
-
   if (!refreshPayload) {
     return next();
   }
@@ -57,6 +55,8 @@ async function deserializeUser(
     {
       email: refreshPayload.email,
       userId: refreshPayload.userId,
+      oAuthAccessToken: refreshPayload.oAuthAccessToken,
+      role: refreshPayload.role,
     },
     "1h", // expires in 1 hour.
   );

@@ -16,7 +16,7 @@ import Image from "next/image";
 
 export default function LoginAccount() {
   const {
-    mutation: { mutate: signInWithOutlook, data },
+    mutation: { mutate: signInWithOutlook },
     formStatus: { setFormLoading, isFormLoading },
   } = useSignInMutation();
 
@@ -24,7 +24,7 @@ export default function LoginAccount() {
     setFormLoading(true);
     signInWithOutlook();
   };
-  
+
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="hidden flex-col items-center justify-center bg-muted lg:flex">
@@ -68,7 +68,6 @@ export default function LoginAccount() {
               )}
               Login With Gmail | Coming soon...
             </Button>
-
           </CardContent>
           <CardFooter className="flex flex-col"></CardFooter>
         </Card>

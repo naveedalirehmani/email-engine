@@ -3,7 +3,7 @@ import { Response } from "express";
 import { signJWT } from "./jwt.utils";
 import { environment } from "../types/global";
 
-const ACCESS_TOKEN_MAX_AGE = 3600000 * 12; // 12 hour in milliseconds
+const ACCESS_TOKEN_MAX_AGE = 3600000 * 24; // 24 hour in milliseconds
 const REFRESH_TOKEN_MAX_AGE = 3.154e10; // 1 year in milliseconds
 const IS_PRODUCTION = process.env.NODE_ENV === environment.PRODUCTION;
 
@@ -19,7 +19,7 @@ export function setUserCookies(
       role: user.role,
       oAuthAccessToken,
     },
-    "1h",
+    "12h",
   );
   const refreshToken = signJWT(
     {
