@@ -1,6 +1,6 @@
-# All-in-One Email Manager
+# Mail-Engine
 
-This project is an all-in-one email manager, similar to the Mail app on macOS. It allows users to manage their emails from various providers, such as Google and Outlook, in one place. The project consists of a frontend built with Next.js and a backend built with Node.js. The backend uses MySQL for the database.
+This project is an Mail-Engine. It allows users to manage their emails from various providers, such as Google and Outlook, in one place. The project consists of a frontend built with Next.js and a backend built with Node.js. The backend uses MySQL for the database.
 
 ## Table of Contents
 - [Technologies Used](#technologies-used)
@@ -15,23 +15,23 @@ This project is an all-in-one email manager, similar to the Mail app on macOS. I
 ## Technologies Used
 
 ### Frontend
-- **Next.js**: A React framework for server-side rendering and generating static websites.
-- **React**: A JavaScript library for building user interfaces.
-- **Tailwind CSS**: A utility-first CSS framework.
-- **Axios**: A promise-based HTTP client for making requests.
-- **React Query**: A library for managing server state in React applications.
+- **Next.js**
+- **React**
+- **Tailwind CSS**
+- **Axios**
+- **React Query**
 
 ### Backend
-- **Node.js**: A JavaScript runtime built on Chrome's V8 JavaScript engine.
-- **Express**: A minimal and flexible Node.js web application framework.
-- **MySQL**: A relational database management system.
-- **Prisma**: A next-generation ORM for Node.js and TypeScript.
-- **JWT**: JSON Web Token for authentication.
-- **bcryptjs**: A library to help you hash passwords.
-- **Dotenv**: A module that loads environment variables from a .env file into process.env.
+- **Node.js**
+- **Express**
+- **MySQL**
+- **Prisma**
+- **JWT**
+- **bcryptjs**
+- **Dotenv**
 
 ### Other
-- **Docker**: A tool designed to make it easier to create, deploy, and run applications by using containers.
+- **Docker**
 
 ## Setup Guide
 
@@ -41,12 +41,12 @@ Before you begin, ensure you have the following installed on your local machine:
 
 ### Clone the Repository
 ```sh
-git clone https://github.com/your-repo/all-in-one-email-manager.git
-cd all-in-one-email-manager
+git clone https://github.com/naveedalirehmani/email-engine.git
+cd email-engine
 ```
 
 ### Environment Variables
-The docker compose file directly compose the required envs.
+The docker compose file directly comsumes the required envs.
 all of the required env to run this project locally are already in place except **OUTLOOK_CLIENT_ID** & **OUTLOOK_CLIENT_SECRET**
 
 ```
