@@ -8,6 +8,7 @@ import {
   ResponseMessages,
 } from "../../../types/enums/responseEnums";
 import { UserType } from "@prisma/client";
+// import { createSubscription } from "../../../webhooks/azure";
 
 class OutlookAuthController {
   private static clientId: string = process.env.OUTLOOK_CLIENT_ID!;
@@ -21,7 +22,7 @@ class OutlookAuthController {
   private static readonly USER_INFO_URL = "https://graph.microsoft.com/v1.0/me";
 
   public static async redirectToOutlookAuth(
-    request: Request,
+    _: Request,
     response: Response,
   ): Promise<void> {
     const authUrl = `${OutlookAuthController.AUTH_URL}?client_id=${OutlookAuthController.clientId}&redirect_uri=${encodeURIComponent(OutlookAuthController.redirectUri)}&response_type=code&scope=openid profile email User.Read offline_access Acronym.Read.All Mail.Read Mail.Read.Shared Mail.ReadBasic Mail.ReadBasic.Shared Mail.ReadWrite Mail.ReadWrite.Shared Mail.Send Mail.Send.Shared SMTP.Send User.ReadWrite`;
@@ -80,6 +81,8 @@ class OutlookAuthController {
       response
         .status(ResponseStatus.Redirect)
         .redirect("http://localhost:3000/mail");
+
+      // await createSubscription(tokenResponse.data.access_token);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         console.error(
