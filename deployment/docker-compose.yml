@@ -5,11 +5,11 @@ services:
     build:
       context: ../portal
     ports:
-      - "3000:3000" 
+      - "3000:3000"
     depends_on:
       - server
       - db
-    enivronment:
+    environment:
       - NEXT_PUBLIC_SERVER=http://server:4000/v1
     networks:
       - custom_bridge
@@ -21,8 +21,18 @@ services:
       - "4000:4000"
     depends_on:
       - db
-    env_file:
-      - ../server/.env
+    environment:
+      - NODE_ENV=DEV
+      - DATABASE_URL=mysql://root:rootpassword@db:3306/mydatabase
+      - PORT=4000
+      - BYCRYPT_SALT=11
+      - SECRET_KEY=e53a867df61df580f3e6f1231232sdfeb4e6fdf8ee8599a8c5c6f1478122ab5e3b
+      - CLIENT_SERVER=http://localhost:3000
+      - GOOGLE_CLIENT_ID=your_google_client_id # Not requried for now.
+      - GOOGLE_CLIENT_SECRET=your_google_client_secret # Not requried for now.
+      - OUTLOOK_CLIENT_ID=PLACEHOLDER_VALUE # Outlook OAuth client ID ( REQUIRED! )
+      - OUTLOOK_CLIENT_SECRET=PLACEHOLDER_VALUE # Outlook OAuth client secret ( REQUIRED! )
+      - REDIRECT_URI=http://localhost:4000/v1/authentication/oauth/outlook/callback
     networks:
       - custom_bridge
 
@@ -31,8 +41,8 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=mydatabase
     volumes:
       - db_data:/var/lib/mysql
     networks:
