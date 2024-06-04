@@ -111,6 +111,8 @@ class EmailController {
     }
   }
 
+  //TODO : work in progress, need to push notificatons to desired user.
+  // add user socket id on subscription to indentify user.
   public static async notifications(request: Request, response: Response) {
     try {
       const io = request.app.get("socketio");
@@ -125,7 +127,6 @@ class EmailController {
 
         io.emit("new_mail", notification);
       });
-
       return response
         .status(ResponseStatus.Accepted)
         .send(ResponseMessages.Accepted);
