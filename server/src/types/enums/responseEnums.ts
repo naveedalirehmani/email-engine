@@ -13,6 +13,7 @@ enum ResponseStatus {
   ServiceUnavailable = 503,
   GatewayTimeout = 504,
   Redirect = 302,
+  Accepted = 202,
 }
 
 enum ResponseMessages {
@@ -29,6 +30,7 @@ enum ResponseMessages {
   BadGateway = "The server, while acting as a gateway or proxy, received an invalid response from the upstream server.",
   ServiceUnavailable = "The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.",
   GatewayTimeout = "The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.",
+  Accepted = "Accepted",
 }
 
 export { ResponseStatus, ResponseMessages };
