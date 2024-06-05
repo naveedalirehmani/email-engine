@@ -104,7 +104,7 @@ REDIRECT_URI=http://localhost:4000/v1/authentication/oauth/outlook/callback  # R
 ## Usage
 Once the setup is complete, open your browser and navigate to:
 - **Frontend**: [http://localhost:3000](http://localhost:3000)
-- **Backend**: [http://localhost:4000/v1](http://localhost:4000/v1)
+- **Backend**: [http://localhost:4000/v1](http://localhost:4000/v1/health)
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
