@@ -36,8 +36,34 @@ This project is an Mail-Engine. It allows users to manage their emails from vari
 ## Setup Guide
 
 ### Prerequisites
+
 Before you begin, ensure you have the following installed on your local machine:
+
 - **Docker**: [Download and Install Docker](https://docs.docker.com/get-docker/)
+
+Additionally, you will need to register an Azure app and obtain the following:
+
+- **OUTLOOK_CLIENT_ID**
+- **OUTLOOK_CLIENT_SECRET**
+
+Ensure that your Azure app has the following API permissions enabled:
+
+- openid
+- profile
+- email
+- User.Read
+- offline_access
+- Acronym.Read.All
+- Mail.Read
+- Mail.Read.Shared
+- Mail.ReadBasic
+- Mail.ReadBasic.Shared
+- Mail.ReadWrite
+- Mail.ReadWrite.Shared
+- Mail.Send
+- Mail.Send.Shared
+- SMTP.Send
+- User.ReadWrite
 
 ### Clone the Repository
 ```sh
