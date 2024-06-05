@@ -36,7 +36,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - WINDOW_SIZE_IN_SECONDS=60
-      - MAX_WINDOW_REQUEST_COUNT=1
+      - MAX_WINDOW_REQUEST_COUNT=10
       - REDIS_PASSWORD=redispassword
     networks:
       - custom_bridge
