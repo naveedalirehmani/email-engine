@@ -72,7 +72,7 @@ cd email-engine
 ```
 
 ### Environment Variables
-The docker compose file directly comsumes the required envs.
+The `docker-compose.yml` file in the `deployment` folder directly comsumes the required envs.
 all of the required env to run this project locally are already in place except **OUTLOOK_CLIENT_ID** & **OUTLOOK_CLIENT_SECRET**
 
 ```
