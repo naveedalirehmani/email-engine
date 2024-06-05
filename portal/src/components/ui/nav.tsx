@@ -4,11 +4,9 @@ import Link from "next/link";
 import {
   CircleUser,
   LogOutIcon,
-  Mail,
   MailSearch,
   Menu,
   Moon,
-  Send,
   SunMoon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -98,7 +96,7 @@ export function Navbar({ children, links }: Props) {
     return (
       <div className="flex h-screen w-screen flex-col items-center justify-center">
         <MailSearch className="animate-bounce" size={100} strokeWidth={1} />
-        {/* <p className="text-gray-700 text-xl">Your Inbox, Unified and Organized...</p> */}
+        <p className="text-gray-700 text-xl">Searching for mails.</p>
       </div>
     );
   }

@@ -33,6 +33,11 @@ services:
       - OUTLOOK_CLIENT_ID=PLACEHOLDER_VALUE # Outlook OAuth client ID ( REQUIRED! )
       - OUTLOOK_CLIENT_SECRET=PLACEHOLDER_VALUE # Outlook OAuth client secret ( REQUIRED! )
       - REDIRECT_URI=http://localhost:4000/v1/authentication/oauth/outlook/callback
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - WINDOW_SIZE_IN_SECONDS=60
+      - MAX_WINDOW_REQUEST_COUNT=1
+      - REDIS_PASSWORD=redispassword
     networks:
       - custom_bridge
 
@@ -48,8 +53,21 @@ services:
     networks:
       - custom_bridge
 
+  redis:
+    image: redis:6.2
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=redispassword
+    command: [ "redis-server", "--requirepass", "redispassword" ]
+    volumes:
+      - redis_data:/data
+    networks:
+      - custom_bridge
+
 volumes:
   db_data:
+  redis_data:
 
 networks:
   custom_bridge:
