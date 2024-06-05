@@ -32,6 +32,7 @@ This project is an Mail-Engine. It allows users to manage their emails from vari
 
 ### Other
 - **Docker**
+- **redis**
 
 ## Setup Guide
 
