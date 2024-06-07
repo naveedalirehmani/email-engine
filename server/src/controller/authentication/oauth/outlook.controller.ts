@@ -7,7 +7,7 @@ import {
   ResponseStatus,
   ResponseMessages,
 } from "../../../types/enums/responseEnums";
-import { UserType } from "@prisma/client";
+import { EmailProvider } from "@prisma/client";
 // import { createSubscription } from "../../../webhooks/azure";
 
 class OutlookAuthController {
@@ -72,7 +72,11 @@ class OutlookAuthController {
 
       const user = await findOrCreateUser(
         userInfoResponse.data.mail || userInfoResponse.data.userPrincipalName,
-        UserType.OUTLOOK_USER,
+        {
+          provider: EmailProvider.OUTLOOK,
+          access: tokenResponse.data.access_token,
+          // refresh: tokenResponse.data.refreshToken,
+        },
         userInfoResponse.data.displayName,
       );
 

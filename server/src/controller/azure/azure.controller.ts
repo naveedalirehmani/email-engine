@@ -146,8 +146,9 @@ class EmailController {
           .status(ResponseStatus.BadRequest)
           .json({ message: "An access token is required." });
       }
+
       const validatedData = sendEmailSchema.parse(request.body);
-      console.log(validatedData, "validatedData");
+
       const emailData = {
         message: {
           subject: validatedData.subject,
