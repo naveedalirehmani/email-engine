@@ -98,7 +98,7 @@ REDIRECT_URI=http://localhost:4000/v1/authentication/oauth/outlook/callback  # R
 
 2. **Start the services using Docker Compose**:
     ```sh
-    docker-compose up
+    docker-compose up --build
     ```
     This command will start the frontend, backend, and MySQL services.
 
