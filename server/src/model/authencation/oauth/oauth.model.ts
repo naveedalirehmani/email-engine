@@ -1,14 +1,19 @@
 import prisma from "../../../prisma";
-import { UserType, UserRole } from "@prisma/client";
+import { EmailProvider, UserRole, User } from "@prisma/client";
 
 export async function findOrCreateUser(
   email: string,
-  userType: UserType,
+  emailProvider: {
+    provider: EmailProvider;
+    access: string;
+    // refresh: string;
+  },
   displayName: string,
-) {
+): Promise<User> {
   try {
     let user = await prisma.user.findUnique({
       where: { email },
+      include: { profiles: true },
     });
 
     if (!user) {
@@ -18,12 +23,53 @@ export async function findOrCreateUser(
           email,
           password: "OAUTH_NO_PASSWORD",
           role: UserRole.USER,
-          userType,
+          profiles: {
+            create: [
+              {
+                accessToken: emailProvider.access,
+                refreshToken: "emailProvider.refresh",
+                provider: emailProvider.provider,
+              },
+            ],
+          },
         },
+        include: { profiles: true },
+      });
+    } else {
+      const existingProfile = user.profiles.find(
+        (profile) => profile.provider === emailProvider.provider,
+      );
+
+      if (existingProfile) {
+        await prisma.profile.update({
+          where: { id: existingProfile.id },
+          data: {
+            accessToken: emailProvider.access,
+            refreshToken: "emailProvider.refresh",
+            updatedAt: new Date(),
+          },
+        });
+      } else {
+        await prisma.profile.create({
+          data: {
+            userId: user.id,
+            accessToken: emailProvider.access,
+            refreshToken: "emailProvider.refresh",
+            provider: emailProvider.provider,
+          },
+        });
+      }
+
+      user = await prisma.user.findUnique({
+        where: { email },
+        include: { profiles: true },
       });
     }
 
-    return user;
+    // @ts-ignore return user without profiles
+    const { _, ...userWithoutProfiles } = user;
+
+    return userWithoutProfiles;
   } catch (error: unknown) {
     console.error("Error in findOrCreateUser:", error);
     throw error;
